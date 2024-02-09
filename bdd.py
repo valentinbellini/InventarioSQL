@@ -36,5 +36,11 @@ class BaseDatos:
         ''', (producto.nombre, producto.descripcion, producto.precio, producto.cantidad_stock, producto.proveedor))
         self.conexion.commit()  # Confirmación de los cambios en la base de datos
 
+    def eliminar_producto(self, producto):
+        self.cursor.execute('''
+             DELETE FROM productos WHERE producto_id=?               
+        ''', (producto.producto_id,))
+        self.conexion.commit()
+    
     def cerrar_conexion(self):
         self.conexion.close()  # Cierre de la conexión a la base de datos

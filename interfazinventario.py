@@ -35,6 +35,8 @@ class InterfazInventario:
         self.crear_interfaz_agregar_producto()
         # Creación de la interfaz para modificar un producto existente
         self.crear_interfaz_modificar_producto()
+        # Creación de la interfaz para eliminar un producto
+        self.crear_boton_eliminar_producto()
         # Creación del botón para mostrar el informe de inventarios
         self.crear_boton_mostrar_informe()
 
@@ -162,6 +164,41 @@ class InterfazInventario:
                 self.entries_modificar["Stock"].insert(0, str(producto.cantidad_stock))
                 self.entries_modificar["Proveedor"].delete(0, tk.END)
                 self.entries_modificar["Proveedor"].insert(0, producto.proveedor)
+
+    # Método para crear el botón para eliminar producto
+    def crear_boton_eliminar_producto(self):
+        self.boton_eliminar = tk.Button(self.pagina_modificar, text="Eliminar Producto", command=self.eliminar_producto, font=("Arial", 12), bg="#FF5733", fg="white")
+        self.boton_eliminar.grid(row=8, column=0, columnspan=2, pady=10)
+
+    # Metodo para crear interfaz de eliminación de producto
+    def crear_interfaz_eliminar_producto(self):
+        etiquetas_eliminar = ["Seleccione Producto:"]
+        self.combo_eliminar = ttk.Combobox(self.pagina_eliminar, values=["Seleccionar"] + [producto.nombre for producto in self.inventario.productos],
+                                            font=("Arial", 12))
+        self.combo_eliminar.grid(row=0, column=1, padx=10, pady=5)
+        self.combo_eliminar.set("Seleccionar")
+
+        self.boton_eliminar = tk.Button(self.pagina_eliminar, text="Eliminar Producto", command=self.eliminar_producto, font=("Arial", 12), bg="#FF5733", fg="white")
+        self.boton_eliminar.grid(row=1, column=0, columnspan=2, pady=10)
+    
+    # Metodo para eliminar producto del inventario y de la base de datos
+    def eliminar_producto(self):
+        selected_product = self.combo_modificar.get()
+        if selected_product != "Seleccionar":
+            producto = next((p for p in self.inventario.productos if p.nombre == selected_product), None)
+            if producto:
+                # Eliminar el producto del inventario y de la base de datos
+                self.inventario.eliminar_producto(producto)
+                self.base_datos.eliminar_producto(producto)
+                # Actualizar el combobox de productos modificados
+                self.combo_modificar["values"] = ["Seleccionar"] + [p.nombre for p in self.inventario.productos]
+                messagebox.showinfo("Éxito", "Producto eliminado correctamente.")
+            else:
+                messagebox.showerror("Error", "Producto no encontrado.")
+        else:
+            messagebox.showerror("Error", "Seleccione un producto para eliminar.")
+
+
 
     # Método para mostrar el informe de inventarios
     def mostrar_informe(self):
