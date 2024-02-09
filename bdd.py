@@ -1,4 +1,5 @@
 import sqlite3
+from tkinter import ttk, messagebox 
 from producto import Producto  # Importamos la clase Producto del módulo producto.py
 
 # Clase para manejar la base de datos
@@ -41,6 +42,17 @@ class BaseDatos:
              DELETE FROM productos WHERE producto_id=?               
         ''', (producto.producto_id,))
         self.conexion.commit()
+        
+    def actualizar_producto(self, producto):
+        try:
+            # Ejecutar la consulta SQL para actualizar el producto
+            self.cursor.execute('''
+                UPDATE productos SET nombre=?, descripcion=?, precio=?, cantidad_stock=?, proveedor=? WHERE producto_id=?
+            ''', (producto.nombre, producto.descripcion, producto.precio, producto.cantidad_stock, producto.proveedor, producto.producto_id))
+            self.conexion.commit()  # Confirmar los cambios en la base de datos
+        except sqlite3.Error as error:
+            # Manejar cualquier error de base de datos
+            messagebox.showerror("Error en base de datos", f"No se pudo actualizar el producto: {error}")
     
     def cerrar_conexion(self):
         self.conexion.close()  # Cierre de la conexión a la base de datos

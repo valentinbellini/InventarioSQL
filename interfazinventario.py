@@ -113,6 +113,24 @@ class InterfazInventario:
         except ValueError:
             messagebox.showerror("Error", "Ingrese datos válidos para el producto.")
 
+    # Método para actualizar las entradas con los datos del producto seleccionado
+    def actualizar_datos_producto_seleccionado(self, event):
+        selected_product = self.combo_modificar.get()
+        if selected_product != "Seleccionar":
+            producto = next((p for p in self.inventario.productos if p.nombre == selected_product), None)
+            if producto:
+                # Mostrar los datos del producto en las entradas correspondientes
+                self.entries_modificar["Nombre del Producto"].delete(0, tk.END)
+                self.entries_modificar["Nombre del Producto"].insert(0, producto.nombre)
+                self.entries_modificar["Descripción"].delete(0, tk.END)
+                self.entries_modificar["Descripción"].insert(0, producto.descripcion)
+                self.entries_modificar["Precio"].delete(0, tk.END)
+                self.entries_modificar["Precio"].insert(0, str(producto.precio))
+                self.entries_modificar["Stock"].delete(0, tk.END)
+                self.entries_modificar["Stock"].insert(0, str(producto.cantidad_stock))
+                self.entries_modificar["Proveedor"].delete(0, tk.END)
+                self.entries_modificar["Proveedor"].insert(0, producto.proveedor)
+
     # Método para modificar un producto existente en el inventario y en la base de datos
     def modificar_producto(self):
         selected_product = self.combo_modificar.get()
@@ -136,6 +154,9 @@ class InterfazInventario:
                         producto.actualizar_proveedor(nuevo_proveedor)
                         producto.actualizar_descripcion(nueva_descripcion)
 
+                        # Actualizar los cambios en la base de datos
+                        self.base_datos.actualizar_producto(producto)
+                        
                         # Cierre y reestablecimiento de la conexión con la base de datos
                         self.base_datos.cerrar_conexion()
                         self.base_datos = BaseDatos()
@@ -146,24 +167,6 @@ class InterfazInventario:
                     messagebox.showerror("Error", "Ingrese nuevo precio, stock, proveedor y descripción.")
             else:
                 messagebox.showerror("Error", "Producto no encontrado.")
-
-    # Método para actualizar las entradas con los datos del producto seleccionado
-    def actualizar_datos_producto_seleccionado(self, event):
-        selected_product = self.combo_modificar.get()
-        if selected_product != "Seleccionar":
-            producto = next((p for p in self.inventario.productos if p.nombre == selected_product), None)
-            if producto:
-                # Mostrar los datos del producto en las entradas correspondientes
-                self.entries_modificar["Nombre del Producto"].delete(0, tk.END)
-                self.entries_modificar["Nombre del Producto"].insert(0, producto.nombre)
-                self.entries_modificar["Descripción"].delete(0, tk.END)
-                self.entries_modificar["Descripción"].insert(0, producto.descripcion)
-                self.entries_modificar["Precio"].delete(0, tk.END)
-                self.entries_modificar["Precio"].insert(0, str(producto.precio))
-                self.entries_modificar["Stock"].delete(0, tk.END)
-                self.entries_modificar["Stock"].insert(0, str(producto.cantidad_stock))
-                self.entries_modificar["Proveedor"].delete(0, tk.END)
-                self.entries_modificar["Proveedor"].insert(0, producto.proveedor)
 
     # Método para crear el botón para eliminar producto
     def crear_boton_eliminar_producto(self):
@@ -197,8 +200,6 @@ class InterfazInventario:
                 messagebox.showerror("Error", "Producto no encontrado.")
         else:
             messagebox.showerror("Error", "Seleccione un producto para eliminar.")
-
-
 
     # Método para mostrar el informe de inventarios
     def mostrar_informe(self):
