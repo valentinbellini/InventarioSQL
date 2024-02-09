@@ -61,13 +61,15 @@ class InterfazInventario:
 
     # Método para crear la interfaz para modificar un producto existente
     def crear_interfaz_modificar_producto(self):
-        etiquetas_modificar = ["Seleccione Producto:", "Nuevo Precio", "Nuevo Stock"]
+        etiquetas_modificar = ["Seleccione Producto:", "Nombre del Producto", "Descripción", "Precio", "Stock", "Proveedor"]
 
         # Combobox para seleccionar el producto a modificar
         self.combo_modificar = ttk.Combobox(self.pagina_modificar, values=["Seleccionar"] + [producto.nombre for producto in self.inventario.productos],
                                             font=("Arial", 12))
         self.combo_modificar.grid(row=0, column=1, padx=10, pady=5)
         self.combo_modificar.set("Seleccionar")
+        # Asociar la función para actualizar las entradas al seleccionar un producto
+        self.combo_modificar.bind("<<ComboboxSelected>>", self.actualizar_datos_producto_seleccionado)
 
         self.entries_modificar = {}  # Diccionario para almacenar las entradas de datos
 
@@ -116,17 +118,21 @@ class InterfazInventario:
             # Obtención del objeto Producto seleccionado para modificar
             producto = next((p for p in self.inventario.productos if p.nombre == selected_product), None)
             if producto:
-                nuevo_precio = self.entries_modificar["Nuevo Precio"].get()
-                nuevo_stock = self.entries_modificar["Nuevo Stock"].get()
+                nuevo_precio = self.entries_modificar["Precio"].get()
+                nuevo_stock = self.entries_modificar["Stock"].get()
+                nuevo_proveedor = self.entries_modificar["Proveedor"].get()
+                nueva_descripcion = self.entries_modificar["Descripción"].get()
 
-                if nuevo_precio and nuevo_stock:
+                if nuevo_precio and nuevo_stock and nuevo_proveedor and nueva_descripcion:
                     try:
                         nuevo_precio = float(nuevo_precio)
                         nuevo_stock = int(nuevo_stock)
 
-                        # Actualización del precio y stock del producto
+                        # Actualización del precio, stock, proveedor y descripción del producto
                         producto.actualizar_precio(nuevo_precio)
                         producto.actualizar_stock(nuevo_stock)
+                        producto.actualizar_proveedor(nuevo_proveedor)
+                        producto.actualizar_descripcion(nueva_descripcion)
 
                         # Cierre y reestablecimiento de la conexión con la base de datos
                         self.base_datos.cerrar_conexion()
@@ -135,9 +141,27 @@ class InterfazInventario:
                     except ValueError:
                         messagebox.showerror("Error", "Ingrese datos válidos para precio y stock.")
                 else:
-                    messagebox.showerror("Error", "Ingrese nuevo precio y stock.")
+                    messagebox.showerror("Error", "Ingrese nuevo precio, stock, proveedor y descripción.")
             else:
                 messagebox.showerror("Error", "Producto no encontrado.")
+
+    # Método para actualizar las entradas con los datos del producto seleccionado
+    def actualizar_datos_producto_seleccionado(self, event):
+        selected_product = self.combo_modificar.get()
+        if selected_product != "Seleccionar":
+            producto = next((p for p in self.inventario.productos if p.nombre == selected_product), None)
+            if producto:
+                # Mostrar los datos del producto en las entradas correspondientes
+                self.entries_modificar["Nombre del Producto"].delete(0, tk.END)
+                self.entries_modificar["Nombre del Producto"].insert(0, producto.nombre)
+                self.entries_modificar["Descripción"].delete(0, tk.END)
+                self.entries_modificar["Descripción"].insert(0, producto.descripcion)
+                self.entries_modificar["Precio"].delete(0, tk.END)
+                self.entries_modificar["Precio"].insert(0, str(producto.precio))
+                self.entries_modificar["Stock"].delete(0, tk.END)
+                self.entries_modificar["Stock"].insert(0, str(producto.cantidad_stock))
+                self.entries_modificar["Proveedor"].delete(0, tk.END)
+                self.entries_modificar["Proveedor"].insert(0, producto.proveedor)
 
     # Método para mostrar el informe de inventarios
     def mostrar_informe(self):

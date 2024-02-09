@@ -8,11 +8,17 @@ class Producto:
         self.cantidad_stock = cantidad_stock
         self.proveedor = proveedor
 
-    def actualizar_stock(self, cantidad):
-        self.cantidad_stock = cantidad
+    def actualizar_stock(self, nuevo_stock):
+        self.cantidad_stock = nuevo_stock
 
-    def actualizar_precio(self, precio):
-        self.precio = precio
+    def actualizar_precio(self, nuevo_precio):
+        self.precio = nuevo_precio
+        
+    def actualizar_proveedor(self, nuevo_proveedor):
+        self.proveedor = nuevo_proveedor
+    
+    def actualizar_descripcion(self, nueva_descripcion):
+        self.descripcion = nueva_descripcion
 
     def obtener_detalles(self):
         detalles = f"ID: {self.producto_id}\nNombre: {self.nombre}\nDescripción: {self.descripcion}\n"
