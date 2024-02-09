@@ -54,5 +54,38 @@ class BaseDatos:
             # Manejar cualquier error de base de datos
             messagebox.showerror("Error en base de datos", f"No se pudo actualizar el producto: {error}")
     
+    def buscar_productos_por_nombre(self, nombre):
+        try:
+            # Consulta SQL para buscar productos por coincidencia de nombre
+            self.cursor.execute("SELECT * FROM productos WHERE nombre LIKE ?", ('%' + nombre + '%',))
+            productos = self.cursor.fetchall()
+            self.conexion.commit()
+        except sqlite3.Error as error:
+            # Manejar cualquier error de base de datos
+            messagebox.showerror("Error en base de datos", f"No se pudo obtener el producto: {error}")
+        return productos
+    
+    def buscar_productos_por_proveedor(self, proveedor):
+        try:
+            # Consulta SQL para buscar productos por proveedor
+            self.cursor.execute("SELECT * FROM productos WHERE proveedor=?", (proveedor,))
+            productos = self.cursor.fetchall()
+            self.conexion.commit()
+        except sqlite3.Error as error:
+            # Manejar cualquier error de base de datos
+            messagebox.showerror("Error en base de datos", f"No se pudo obtener el producto: {error}")
+        return productos
+
+    def buscar_producto_por_id(self, producto_id):
+        try:
+            # Consulta SQL para buscar un producto por ID
+            self.cursor.execute("SELECT * FROM productos WHERE producto_id=?", (producto_id,))
+            producto = self.cursor.fetchone()
+            self.conexion.commit()
+        except sqlite3.Error as error:
+            # Manejar cualquier error de base de datos
+            messagebox.showerror("Error en base de datos", f"No se pudo obtener el producto: {error}")
+        return producto
+    
     def cerrar_conexion(self):
         self.conexion.close()  # Cierre de la conexión a la base de datos
