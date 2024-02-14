@@ -35,9 +35,11 @@ class InterfazInventario:
         self.crear_interfaz_agregar_producto()
         # Creación de la interfaz para modificar un producto existente
         self.crear_interfaz_modificar_producto()
+        # Creación del botón para eliminar un producto
+        self.crear_boton_eliminar_producto()  # Llamar a la función aquí
         # Creación del botón para mostrar el informe de inventarios
         self.crear_boton_mostrar_informe()
-        # Creacion de la interfaz de estadisticas
+        # Creación de la interfaz de estadísticas
         self.crear_interfaz_estadisticas()
         
 
@@ -144,10 +146,10 @@ class InterfazInventario:
                     try:
                         nuevo_precio = float(nuevo_precio)
                         nuevo_stock = int(nuevo_stock)
-                        producto.actualizar_precio(nuevo_precio)
-                        producto.actualizar_stock(nuevo_stock)
-                        producto.actualizar_proveedor(nuevo_proveedor)
-                        producto.actualizar_descripcion(nueva_descripcion)
+                        producto.precio = nuevo_precio
+                        producto.stock = nuevo_stock
+                        producto.proveedor = nuevo_proveedor
+                        producto.descripcion = nueva_descripcion
                         self.base_datos.actualizar_producto(producto)
                         self.base_datos.cerrar_conexion()
                         self.base_datos = BaseDatos()
