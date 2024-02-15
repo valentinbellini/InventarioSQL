@@ -180,5 +180,25 @@ class InterfazInventario:
     def mostrar_informe(self):
         informe = self.inventario.generar_informe()
         mensaje = "\n\n".join(informe)
-        messagebox.showinfo("Informe de Inventarios", mensaje)
+
+        # Crear una ventana secundaria para mostrar el informe
+        ventana_informe = tk.Toplevel(self.root)
+        ventana_informe.title("Informe de Inventarios")
+        
+        # Crear un frame para contener el mensaje con desplazamiento
+        frame_mensaje = tk.Frame(ventana_informe)
+        frame_mensaje.pack(fill="both", expand=True)
+
+        # Crear un scrollbar para desplazarse verticalmente
+        scrollbar = ttk.Scrollbar(frame_mensaje, orient="vertical")
+        scrollbar.pack(side="right", fill="y")
+
+        # Crear un Text widget para mostrar el mensaje
+        txt_informe = tk.Text(frame_mensaje, yscrollcommand=scrollbar.set)
+        txt_informe.pack(fill="both", expand=True)
+        txt_informe.insert("1.0", mensaje)
+
+        # Configurar el scrollbar para controlar el desplazamiento del Text widget
+        scrollbar.config(command=txt_informe.yview)
+
 
