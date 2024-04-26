@@ -33,6 +33,6 @@ Este es un proyecto de Python que proporciona una interfaz gráfica para gestion
 
 ## Contribuir
 
-Si quieres contribuir a este proyecto, ¡no dudes en abrir un problema o enviar una solicitud de extracción!
+Si quieres contribuir a este proyecto, no dudes en hacerlo
 
 
